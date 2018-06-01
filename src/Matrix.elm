@@ -1,4 +1,4 @@
-module Matrix exposing (empty, fromList, multiply, toList, transpose)
+module Matrix exposing (Matrix, empty, fromList, multiply, toList, transpose)
 
 import Array exposing (Array)
 
@@ -116,7 +116,7 @@ buildListFromMatrix matrix ( idx, val ) acc =
             if i >= List.length acc then
                 initiateRow acc val
             else
-                List.append rest [ List.append lastRow [ val ] ]
+                List.append lastRow [ val ] :: rest |> List.reverse
 
         _ ->
             initiateRow acc val

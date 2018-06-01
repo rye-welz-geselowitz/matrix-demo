@@ -1,8 +1,8 @@
 module Main exposing (..)
 
+import Format
 import Html exposing (Html, div, img, text)
-import Html.Attributes exposing (src)
-import Matrix exposing (fromList)
+import Matrix exposing (Matrix, fromList)
 
 
 ---- MODEL ----
@@ -34,10 +34,73 @@ update msg model =
 ---- VIEW ----
 
 
+testMatrix =
+    Matrix.fromList
+        [ [ 2 / 3, -2 / 3, 1 / 3 ], [ 1 / 3, 2 / 3, 2 / 3 ], [ 2 / 3, 1 / 3, -2 / 3 ] ]
+
+
 view : Model -> Html Msg
 view model =
+    case testMatrix of
+        Nothing ->
+            div [] [ text ":(" ]
+
+        Just matrix ->
+            let
+                transposed =
+                    Matrix.transpose matrix
+            in
+            case Matrix.multiply matrix transposed of
+                Nothing ->
+                    div [] [ text ":(" ]
+
+                Just multiplied ->
+                    div []
+                        [ summaryView
+                        , div []
+                            [ Html.h3 [] [ text "Original" ]
+                            , matrixView matrix
+                            ]
+                        , div []
+                            [ Html.h3 [] [ text "Transposed" ]
+                            , matrixView transposed
+                            ]
+                        , div []
+                            [ Html.h3 [] [ text "Multiplied by Transpose" ]
+                            , matrixView multiplied
+                            ]
+                        ]
+
+
+summaryView : Html Msg
+summaryView =
     div []
-        []
+        [ text """A n×n matrix A is an orthogonal matrix if
+            A multiplied by its transpose is equal to the identity matrix"""
+        ]
+
+
+matrixView : Matrix Float -> Html Msg
+matrixView matrix =
+    let
+        lists =
+            Matrix.toList matrix
+    in
+    lists
+        |> List.map matrixRow
+        |> Html.table []
+
+
+matrixRow : List Float -> Html Msg
+matrixRow items =
+    items
+        |> List.map matrixItem
+        |> Html.tr []
+
+
+matrixItem : Float -> Html Msg
+matrixItem item =
+    Html.td [] [ item |> Format.floatToString 2 |> text ]
 
 
 

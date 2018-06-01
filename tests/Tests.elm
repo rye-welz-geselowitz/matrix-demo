@@ -8,7 +8,25 @@ import Test exposing (..)
 all : Test
 all =
     describe "Matrix tests"
-        [ describe "Transposing a matrix"
+        [ describe "List conversions"
+            [ test "toList and fromList maintain data integrity" <|
+                \_ ->
+                    let
+                        l1 =
+                            [ [ 1, 2, 3 ]
+                            , [ 4, 5, 6 ]
+                            , [ 7, 8, 9 ]
+                            ]
+
+                        transformed =
+                            Matrix.fromList
+                                l1
+                                |> Maybe.withDefault Matrix.empty
+                                |> Matrix.toList
+                    in
+                    Expect.equal l1 transformed
+            ]
+        , describe "Transposing a matrix"
             [ test "transposes an n x n matrix" <|
                 \_ ->
                     let
